@@ -11,12 +11,12 @@ import com.itch.future.util.Helper;
 public class Manager {
 
 	public static void sequentialCalculate() {
-		
+
 		long startTime = System.currentTimeMillis();
 
-		System.out.printf("Round 1 : %d\n", Helper.getSum(0, 1000000000));
-		System.out.printf("Round 2 : %d\n", Helper.getSum(1000000001, 2000000000));
-		System.out.printf("Round 3 : %d\n", Helper.getSum(2000000001, 2099999999));
+		long sum = Helper.getSum(0, 1000000000) + Helper.getSum(1000000001, 2000000000)
+				+ Helper.getSum(2000000001, 2099999999);
+		System.out.printf("Sum : %d\n", sum);
 
 		long endTime = System.currentTimeMillis();
 
@@ -24,7 +24,7 @@ public class Manager {
 	}
 
 	public static void parallelCalculate() {
-		
+
 		long startTime = System.currentTimeMillis();
 
 		ExecutorService executorService = Executors.newFixedThreadPool(3);
@@ -32,14 +32,12 @@ public class Manager {
 		Future<Long> future2 = executorService.submit(new CallableAdder(1000000001, 2000000000));
 		Future<Long> future3 = executorService.submit(new CallableAdder(2000000001, 2099999999));
 
-		while (!future1.isDone() || !future2.isDone() || !future3.isDone()) {
-			continue;
-		}
-
 		try {
-			System.out.printf("Round 1 : %d\n", future1.get());
-			System.out.printf("Round 2 : %d\n", future2.get());
-			System.out.printf("Round 3 : %d\n", future3.get());			
+
+			Long sum = future1.get() + future2.get() + future3.get();
+
+			System.out.printf("Sum : %d\n", sum.longValue());
+
 		} catch (InterruptedException | ExecutionException e) {
 			System.err.printf("Error : %s \n\n", e.getMessage());
 		}
